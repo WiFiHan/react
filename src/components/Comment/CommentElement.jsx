@@ -1,9 +1,27 @@
-const CommentElement = (props) => {
-  // TODO : props 받기
-  // TODO : 수정하는 input 내용 관리
+import { useState } from "react";
 
-  // props로 받은내용으로 채우기
-  const comment = {};
+const CommentElement = ({ comment, deleteComment }) => {
+  // TODO : props 받기
+
+  // TODO : 수정하는 input 내용 관리
+  
+  const [isEditting, setIsEditting] = useState(false);
+  const editComment = () => {
+    setIsEditting(true);
+  }
+
+  const [commentData, setCommentData] = useState({
+    content: comment.content,
+    created_at: Date()
+  });
+
+  const handleInput = (e) => {
+    setCommentData({...commentData, [e.target.id]: e.target.value });
+  };
+
+  const handleEdit = (e) => {
+    setIsEditting(false);
+  };
 
   // comment created_at 전처리
   const date = new Date(comment.created_at);
@@ -13,20 +31,46 @@ const CommentElement = (props) => {
   let day = date.getDate();
   day = day < 10 ? `0${day}` : day;
 
+  return(
+    isEditting ?
+    <div className="flex w-full flex-col">
+      <div className="flex  w-full gap-x-5">
+      <input
+          type="text"
+          id="content"
+          onChange={handleInput}
+          value={commentData.content}
+          className="border border-black-400 outline-none rounded-2xl text-center py-2 px-20 text-black-400 bg-transparent"
+        />
+        
+        <button onClick={handleEdit} className="small-button w-16">
+          Done
+        </button>
+        </div>
+      </div>
+    : (
+
+    
   <div className="w-full flex justify-between gap-1 mb-2">
-    <div className="w-3/4">
-      {/* 수정중일때와 아닐때를 다르게 보여줘야겠지
-      {수정중 ? <input /> : <p>{내용}</p>}
-      날짜 */}
+    <div className="w-1/2">
+      <p>{commentData.content}</p>
       <span className="text-base mr-1 text-gray-300">
         {year}.{month}.{day}
       </span>
-      {/* 수정, 삭제버튼 */}
-      <div className="w-1/4 flex flex-row-reverse items-center">
-        {/* delete 버튼은 수정이 아닐때만 보이게 해줘 */}
-      </div>
     </div>
-  </div>;
+    <div className="w-1/4 flex flex-row-reverse items-center">
+        <button onClick={editComment} className="small-button w-16">
+          Edit
+        </button>
+        <button onClick={() => deleteComment(comment)} className="small-button w-16">
+          Delete
+        </button>
+      </div>
+
+  </div>
+  )
+  );
 };
 
 export default CommentElement;
+
